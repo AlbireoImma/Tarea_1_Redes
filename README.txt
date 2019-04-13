@@ -3,8 +3,8 @@ Integrantes:
 - 
 
 Para la compilacion basta con hacer -> make ftp
-Para iniciar el servidor se necesita hacer -> make run server
-Para iniciar un cliente se debe hacer -> make run cliente
+Para iniciar el servidor se necesita hacer -> make run_server
+Para iniciar un cliente se debe hacer -> make run_cliente
 Para limpiar los archivos innecesarios hacer -> make clean
 Para eliminar el log -> make clean_log
 Los archivos del lado del cliente estan en -> ./Client
