@@ -10,10 +10,7 @@ public class Server {
             System.out.println("El servidor esta en marcha...");
             ThreadPool piscina = new ThreadPool(50);
             while (true) {
-                try (Socket socket = listener.accept()) {
-                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                    out.println(new Date().toString());
-                }
+                piscina.execute(new Process(listener.accept()));
             }
         }
     }

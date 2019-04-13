@@ -7,8 +7,8 @@ public class ThreadPool {
 
     public ThreadPool(int nThreads) {
         this.nThreads = nThreads;
-        queue = new LinkedBlockingQueue();
-        threads = new PoolWorker[nThreads];
+        this.queue = new LinkedBlockingQueue<Runnable>(50);
+        this.threads = new PoolWorker[nThreads];
 
         for (int i = 0; i < nThreads; i++) {
             threads[i] = new PoolWorker();
