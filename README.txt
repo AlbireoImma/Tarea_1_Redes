@@ -12,3 +12,4 @@ Integrantes:
 !! Los verbos aceptados son: ls, del, get, put los cuales son sensibles a su capitalizacion
 !! El puerto usado para el servidor es el 59090 verificar que no este siendo usado
 !! Se hace uso de localhost como direccion para el servidor
+!! El sistemas de archivos esta pensado en Unix-Based (/ no \)
