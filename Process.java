@@ -1,3 +1,6 @@
+/*
+Importes necesarios para el funcionamiento de la clase
+*/
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutput;
@@ -16,141 +19,138 @@ import java.util.Calendar;
 import java.io.RandomAccessFile;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Calendar;
 
 public class Process implements Runnable {
-
+    // Nuestras principales variables de comunicacion es el socket del cliente
     private Socket socket;
-    InputStream in_datos = null;
-    OutputStream out_datos = null;
-
-    public Process(Socket socket) {
+    // Constructor de la clase
+      public Process(Socket socket) {
         this.socket = socket;
     }
-
+    // Metodo para el funcionamiento de la hebra en el servidor
     @Override
-    public void run() {
-        DateFormat dateformat = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
-        DataOutputStream dos;
-        DataInputStream dis;
-        FileOutputStream log;
+      public void run() {
+        // Variables usadas para el log como la transferencia de datos entre servidor y cliente
+        DateFormat dateformat = new SimpleDateFormat("EEE d-MM-YYYY hh:mm:ss"); // Plantilla del timestamp en el log
+        DataOutputStream dos; // Stream de salida de datos con el cliente
+        DataInputStream dis; // Stream de entrada de datos con el cliente
+        FileOutputStream log; // Stream para el archivo de log
         try {
-            log = new FileOutputStream("./log.txt", true);
-            File folder = new File("./Server");
-            File[] listOfFiles = folder.listFiles();
-            File archivo_s;
-            RandomAccessFile archivo;
-            int Contador;
-            int cantidad;
-            byte[] Array;
-            OutputStream os;
-            String[] ls_aux = new String[listOfFiles.length];
-            String to_log;
-            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Conectado\n";
-            try {
-                log.write(to_log.getBytes());
-                dos = new DataOutputStream(socket.getOutputStream());
-                dos.writeUTF("Bienvenido al Servidor");
-                try {
-                    dis = new DataInputStream(socket.getInputStream());
-                    String Entrada = dis.readUTF();
-                    String[] Entrada_parse = Entrada.split(" ");
-                    while (Entrada.length() > 0) {
-                        if (Entrada.equals("ls")) {
-                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada
-                            + "\n";
-                            log.write(to_log.getBytes());
-                            folder = new File("./Server");
-                            listOfFiles = folder.listFiles();
-                            Contador = 0;
-                            System.out.println("Peticion de ls: " + socket);
+            log = new FileOutputStream("./log.txt", true); // Anexamos los eventos al log
+            File folder = new File("./Server"); // Obtenemos nuestro folder del servidor en caso de usarse
+            File[] listOfFiles = folder.listFiles(); // Obtenemos la lista de archivos en el servidor
+            File archivo_s; // Variable para verificar si los archivos existen en el servidor
+            RandomAccessFile archivo; // Variable para enviar los archivos como array de bytes
+            int Contador; // Variable usada para transportar enteros
+            int cantidad; // Variable usada para transportar enteros
+            byte[] Array; // Variable usada para transportar array de bytes
+            OutputStream os; // Variable usada para escribir a un archivo
+            String[] ls_aux = new String[listOfFiles.length]; // Variable que contiene los nombres de archivo del servidor
+            String to_log; // String usado para escribir en el log
+            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Conectado\n"; // Instanciacion de string para el log
+            try { // Bloque Try-catch
+                log.write(to_log.getBytes()); // Escribimos en el log
+                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                dos.writeUTF("Bienvenido al Servidor"); // Le damos la bienvenida al servidor
+                try { // Bloque Try-catch
+                    dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada al cliente
+                    String Entrada = dis.readUTF(); // Esperamos un string por parte del cliente, el comando a realizar
+                    String[] Entrada_parse = Entrada.split(" "); // Parseamos la entrada con un espacio de la forma "verbo nombre_archivo" o "verbo"
+                    while (Entrada.length() > 0) { // Mientras la entrada del cliente no sea nula
+                        if (Entrada.equals("ls")) { // Si el verbo es un ls
+                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
+                            log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
+                            folder = new File("./Server"); // Abrimos el directorio del servidor
+                            listOfFiles = folder.listFiles(); // Listamos los archivos
+                            Contador = 0; // Fijamos nuestro contador
+                            System.out.println("Peticion de ls: " + socket); // Avisamos de la peticion
+                            // En este for obtenemos la cantidad de archivos y un arreglo con sus nombres
                             for (File file : listOfFiles) {
                                 if (file.isFile()) {
                                     ls_aux[Contador] = file.getName();
                                     Contador++;
                                 }
                             }
-                            dos = new DataOutputStream(socket.getOutputStream());
-                            dos.writeInt(Contador);
+                            dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                            dos.writeInt(Contador); // Enviamos la cantidad de archivos al cliente
+                            // Enviamos los nombres de los archivos al servidor uno a la vez
                             while (Contador > 0) {
                                 dos = new DataOutputStream(socket.getOutputStream());
                                 dos.writeUTF(ls_aux[Contador - 1]);
                                 Contador--;
                             }
-                            dos = new DataOutputStream(socket.getOutputStream());
-                            dos.writeUTF("Solicitud Completada");
-                        } else if (Entrada_parse[0].equals("get")) {
-                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada
-                            + "\n";
-                            log.write(to_log.getBytes());
-                            System.out.println("Peticion de get: " + socket);
-                            archivo = new RandomAccessFile("./Server/" + Entrada_parse[1], "r");
-                            Contador = (int) archivo.length();
-                            dos = new DataOutputStream(socket.getOutputStream());
-                            dos.writeInt(Contador);
-                            Array = new byte[Contador];
-                            archivo.readFully(Array);
-                            dos = new DataOutputStream(socket.getOutputStream());
-                            dos.write(Array);
-                            System.out.println("Archivo Enviado");
-                        } else if (Entrada_parse[0].equals("put")) {
-                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada
-                            + "\n";
-                            log.write(to_log.getBytes());
-                            System.out.println("Peticion de put: " + socket);
-                            dis = new DataInputStream(socket.getInputStream());
-                            cantidad = dis.readInt();
-                            archivo_s = new File("./Server/" + Entrada_parse[1]);
-                            os = new FileOutputStream(archivo_s);
-                            Array = new byte[cantidad];
-                            dis = new DataInputStream(socket.getInputStream());
-                            dis.readFully(Array);
-                            os.write(Array);
-                            System.out.println("Archivo Obtenido");
-                            os.close();
-                            dos = new DataOutputStream(socket.getOutputStream());
-                            dos.writeUTF("Solicitud Completada");
-                        } else if (Entrada_parse[0].equals("del")) {
-                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada
-                            + "\n";
-                            log.write(to_log.getBytes());
-                            System.out.println("Peticion de del: " + socket);
-                            archivo_s = new File("./Server/" + Entrada_parse[1]);
-                            if (archivo_s.delete()) {
-                                dos = new DataOutputStream(socket.getOutputStream());
-                                dos.writeUTF("Solicitud Completada");
-                            } else {
-                                dos = new DataOutputStream(socket.getOutputStream());
-                                dos.writeUTF("Solicitud Fallida");
+                        } else if (Entrada_parse[0].equals("get")) { // Si el verbo es un get
+                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
+                            log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
+                            System.out.println("Peticion de get: " + socket); // Avisamos de la peticion
+                            archivo_s = new File("./Server/" + Entrada_parse[1]); // Obtenemos una variable File del archivo solicitado
+                            if (archivo_s.exists()){ // Comprobamos si el archivo existe
+                                archivo = new RandomAccessFile("./Server/" + Entrada_parse[1], "r"); // Abrimos el archivo en modo lectura
+                                Contador = (int) archivo.length(); // Obtenemos el largo del archivo (la cantidad de bytes)
+                                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                                dos.writeInt(Contador); // Enviamos el largo del archivo al cliente
+                                Array = new byte[Contador]; // Creamos un array para almacenar el archivo
+                                archivo.readFully(Array); // Escribimos el archivo al array
+                                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                                dos.write(Array); // Enviamos el array con el archivo en el
+                                archivo.close(); // Cerramos el archivo
+                                System.out.println("Archivo Enviado"); // Notificamos del envio
+                            } else { // El archivo no existe
+                                System.out.println("Archivo No Existe"); // Notificamos de la no existencia
+                                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                                dos.writeInt(0); // Enviamos un 0 al cliente a modo que el archivo no existe
                             }
-                        } else {
-                            System.out.println("Peticion invalida: " + socket);
-                            dos = new DataOutputStream(socket.getOutputStream());
-                            dos.writeUTF("Invalida");
-                            break;
+                        } else if (Entrada_parse[0].equals("put")) { // Si el verbo es un put
+                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
+                            log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
+                            System.out.println("Peticion de put: " + socket); // Avisamos de la peticion
+                            dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada al cliente
+                            cantidad = dis.readInt(); // Esperamos un entero por parte del cliente (la cantidad de bytes del archivo a recibir)
+                            if (cantidad > 0) { // Si el entero es mayor que uno el archivo existe
+                                archivo_s = new File("./Server/" + Entrada_parse[1]); // Creamos el archivo
+                                os = new FileOutputStream(archivo_s); // Creamos el stream para escribir en el archivo
+                                Array = new byte[cantidad]; // Creamos un array de bytes que contendra el archivo
+                                dis = new DataInputStream(socket.getInputStream()); // Esperamos por el archivo
+                                dis.readFully(Array); // Escribimos el archivo en el array
+                                os.write(Array); // Pasamos el array al archivo en la parte del servidor
+                                System.out.println("Archivo Obtenido"); // Notificamos que hemos recibido el archivo
+                                os.close(); // Cerramos el archivo (el stream a el)
+                                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                                dos.writeUTF("Solicitud Completada"); // Enviamos un string al cliente
+                            } else { // El archivo no existe
+                                System.out.println("Archivo Inexistente"); // Notificamos la no existencia del archivo
+                            }
+                        } else if (Entrada_parse[0].equals("del")) { // Si el verbo es del
+                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
+                            log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
+                            System.out.println("Peticion de del: " + socket); // Avisamos de la peticion
+                            archivo_s = new File("./Server/" + Entrada_parse[1]); // Creamos el acceso al archivo
+                            if (archivo_s.delete()) { // Verificamos si el archivo existe
+                                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                                dos.writeUTF("Solicitud Completada"); // Enviamos un string al cliente
+                            } else { // El archivo no existe
+                                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                                dos.writeUTF("Solicitud Fallida"); // Enviamos un string al cliente
+                            }
+                        } else { // la pericion es invalida
+                            System.out.println("Peticion invalida: " + socket); // Avisamos de la peticion
+                            dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                            dos.writeUTF("Invalida"); // Enviamos un string al cliente
                         }
                         dis = new DataInputStream(socket.getInputStream());
-                        Entrada = dis.readUTF();
-                        Entrada_parse = Entrada.split(" ");
+                        Entrada = dis.readUTF(); // Creamos un stream de entrada al cliente (Esperamos por otro comando)
+                        Entrada_parse = Entrada.split(" "); // Parseamos la entrada
                     }
                 } catch (Exception err) {
-                    to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Error\n";
-                    log.write(to_log.getBytes());
+                    //to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Error\n";
+                    //log.write(to_log.getBytes());
                 } finally {
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                    }
+                    try {socket.close();} catch (IOException e) {}
                     to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Cerrado\n";
                     log.write(to_log.getBytes());
                 }
-            } catch (IOException e) {
-            }
+            } catch (IOException e) {}
             log.close();
-        } catch (IOException e) {
-        }
+        } catch (IOException e) {}
     }
 }
