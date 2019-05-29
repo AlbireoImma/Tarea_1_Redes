@@ -13,18 +13,45 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.Random;
 
 
 
 public class Process_Partes implements Runnable {
-    public static String get_file(String[] nombre,String IP){
-
-        return "Archivo";
-    }
-    public static int put_file(String archivo){
-        return 0;
+    public static String send_file(String nombre,String IP){
+        try{
+            Socket socket = new Socket(IP, 59090);
+            DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
+            String msg = dis.readUTF(); // Esperamos respuesta del servidor
+            System.out.println("Subiendo Archivo...");
+            String Entrada = "put " + nombre;
+            dos.writeUTF(Entrada); // Enviamos la entrada al servidor
+            File archivo = new File(nombre); // Abrimos el archivo a enviar
+            if (archivo.exists()) { // Verificamos la existencia del archivo
+                RandomAccessFile archivo_s = new RandomAccessFile(nombre, "r"); // Abrimos el archivo en modo lectura
+                int cantidad = (int) archivo_s.length(); // Obtenemos el largo del archivo a enviar (en bytes)
+                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida
+                dos.writeInt(cantidad); // Enviamos la cantidad de bytes al servidor
+                byte[] Array = new byte[cantidad]; // Creamos el array que contendra el archivo
+                archivo_s.readFully(Array); // Leemos el archivo y lo alojamos en el array
+                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida
+                dos.write(Array); // Enviamos el array al servidor
+                dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
+                System.out.println(dis.readUTF()); // Leemos la entrada y la imprimimos
+                archivo_s.close(); // Cerramos el archivo
+            } else { // El archivo no existe
+                System.out.println("Archivo No Existe");
+                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida
+                dos.writeInt(0); // Enviamos un 0 a forma de no existencia al servidor
+            }
+            return "Archivo";
+        } catch(Exception e){
+            return "Error";
+        }
     }
     public static int del_file(String archivo){
         return 0;
@@ -83,7 +110,8 @@ public class Process_Partes implements Runnable {
                     String Entrada = dis.readUTF(); // Esperamos un string por parte del cliente, el comando a realizar
                     String[] Entrada_parse = Entrada.split(" "); // Parseamos la entrada con un espacio de la forma "verbo nombre_archivo" o "verbo"
                     while (Entrada.length() > 0) { // Mientras la entrada del cliente no sea nula
-                        if (Entrada.equals("ls")) { // Si el verbo es un ls
+                        if (Entrada.equals("ls")) { // Si el verbo es un ls 
+                            //TODO
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             folder = new File("./Server"); // Abrimos el directorio del servidor
@@ -105,7 +133,8 @@ public class Process_Partes implements Runnable {
                                 dos.writeUTF(ls_aux[Contador - 1]);
                                 Contador--;
                             }
-                        } else if (Entrada_parse[0].equals("get")) { // Si el verbo es un get
+                        } else if (Entrada_parse[0].equals("get")) { // Si el verbo es un get 
+                            //TODO
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             System.out.println("Peticion de get: " + socket); // Avisamos de la peticion
@@ -126,7 +155,8 @@ public class Process_Partes implements Runnable {
                                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                                 dos.writeInt(0); // Enviamos un 0 al cliente a modo que el archivo no existe
                             }
-                        } else if (Entrada_parse[0].equals("put")) { // Si el verbo es un put
+                        } else if (Entrada_parse[0].equals("put")) { // Si el verbo es un put 
+                            //ITMK
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             System.out.println("Peticion de put: " + socket); // Avisamos de la peticion
@@ -141,12 +171,29 @@ public class Process_Partes implements Runnable {
                                 os.write(Array); // Pasamos el array al archivo en la parte del servidor
                                 System.out.println("Archivo Obtenido"); // Notificamos que hemos recibido el archivo
                                 os.close(); // Cerramos el archivo (el stream a el)
+                                Encode64 coder = new Encode64(Entrada_parse[1]);
+                                String codificado = coder.codificar();
+                                Spliter separador = new Spliter(codificado);
+                                ArrayList<String> lista = separador.Separar();
+                                ArrayList<String> direcciones = new ArrayList<String>();
+                                String tamanio = Integer.toString(lista.size());
+                                direcciones.add(tamanio);
+                                String[] seleccion = IPS.keySet().toArray(new String[IPS.size()]);
+                                String seleccionado;
+                                for (String nombre : lista) {
+                                    // Falta revisar si las IP estan disponibles
+                                    seleccionado = seleccion[new Random().nextInt(seleccion.length)];
+                                    send_file(nombre, seleccionado);
+                                    direcciones.add(seleccionado);
+                                }
+                                ARCHIVOS.put(Entrada_parse[1], direcciones.toArray(new String[0]));
                                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                                 dos.writeUTF("Solicitud Completada"); // Enviamos un string al cliente
                             } else { // El archivo no existe
                                 System.out.println("Archivo Inexistente"); // Notificamos la no existencia del archivo
                             }
                         } else if (Entrada_parse[0].equals("del")) { // Si el verbo es del
+                            // TODO
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             System.out.println("Peticion de del: " + socket); // Avisamos de la peticion
