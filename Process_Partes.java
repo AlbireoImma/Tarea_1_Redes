@@ -156,7 +156,7 @@ public class Process_Partes implements Runnable {
                                 dos.writeInt(0); // Enviamos un 0 al cliente a modo que el archivo no existe
                             }
                         } else if (Entrada_parse[0].equals("put")) { // Si el verbo es un put 
-                            //ITMK
+                            //CHECK
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             System.out.println("Peticion de put: " + socket); // Avisamos de la peticion
