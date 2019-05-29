@@ -92,11 +92,11 @@ public class Spliter {
 		} catch(Exception e){}
 	}
 
-	public static void Unir(ArrayList<String> archivos){
+	public static String Unir(ArrayList<String> archivos){
 		try{
 			String expresion2 = archivos.get(0);
 			String[] parseo = expresion2.split("[.]");
-			expresion2 = parseo[0] + "." + parseo[1];
+			expresion2 = parseo[0] + "." + parseo[1] + "." + parseo[2];
 			InputStream entrada = null;
 			OutputStream salida = null;
 			System.out.println("Cantidad a unir: " + archivos.size());
@@ -114,21 +114,21 @@ public class Spliter {
 			}
 			entrada.close();
 			salida.close();
+			return expresion2;
 		} catch(Exception e){
 			System.out.println("Excepción generada al unir");
+			return "Error";
 		}
 	}
 
 	public static String Encode64(String archivo){
 		Base64.Encoder encoder = Base64.getMimeEncoder();
-		String resultado;
 		Path original = Paths.get(archivo);
 		Path objetivo = Paths.get(archivo + ".cifrado");
-		resultado = archivo + ".cifrado";
 		try {
 			OutputStream salida = Files.newOutputStream(objetivo);
 			Files.copy(original, encoder.wrap(salida));
-			return resultado;
+			return archivo + ".cifrado";
 		} catch (Exception e) {
 			return "Error";
 		}
@@ -139,7 +139,7 @@ public class Spliter {
 		Decoder decoder = Base64.getDecoder();
 		String linea;
 		BufferedReader lector;
-		String nombre_arch = archivo.split("[.]cifrado")[0];
+		String nombre_arch = archivo.split("[.]cifrado")[0]+".final";
 		try{
 			OutputStream salida = new FileOutputStream(nombre_arch);
 			lector = new BufferedReader(new FileReader(archivo));
@@ -153,19 +153,20 @@ public class Spliter {
 			salida.close();
 			return nombre_arch;
 		} catch(Exception e){
+			System.out.println("Error en Decode64");
 			return "Error";
 		}
 	}
 	// Codigo de prueba
 	public static void main(String[] args) {
-		Encode64("test1.jpg"); // Ciframos un archivo
-		Spliter archivo = new Spliter("test1.jpg.cifrado"); // Creamos un Spliter
+		String cifrado = Encode64("test2.jpg"); // Ciframos un archivo
+		Spliter archivo = new Spliter(cifrado); // Creamos un Spliter
 		ArrayList<String> lista = archivo.Separar(); // Lo dividimos en partes
 		System.out.println("Pulsar para unir...");
 		try{System.in.read();}catch(Exception e){}
-		Unir(lista); // Unimos las partes divididas
+		String unido = Unir(lista); // Unimos las partes divididas
 		System.out.println("Pulsar para descifrar...");
 		try{System.in.read();}catch(Exception e){}
-		Decode64("test1.jpg.cifrado"); // Desciframos
+		System.out.println(Decode64(unido)); // Desciframos
 	}
 }
