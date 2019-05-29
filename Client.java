@@ -18,7 +18,8 @@ public class Client {
         byte[] Array; // Array de bytes utilizado para el movimiento de archivos
         File archivo; // Variable del tipo File utilizada para verificar la existencia de archivos
         // Intentamos conectarnos al servidor en el puerto 59090
-        try (Socket socket = new Socket("10.6.40.195", 59090)) {
+        try {
+            Socket socket = new Socket("10.6.40.195", 59090);
             DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
             OutputStream os; // Variable usada para escribir a un archivo
@@ -105,6 +106,9 @@ public class Client {
             }
             in.close();
             scanner.close();
+            socket.close();
+        } catch (Exception e){
+            // TODO
         }
     }
 }
