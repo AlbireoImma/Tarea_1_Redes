@@ -1,15 +1,14 @@
 // Dependencias necesarias para el funcionamiento de la clase
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.net.Socket;
 import java.util.Scanner;
-import java.io.RandomAccessFile;
-import java.io.File;
 
 public class Client {
     public static void main(String[] args) throws IOException {
@@ -104,6 +103,8 @@ public class Client {
                 }
                 // System.out.println(in.nextLine());
             }
+            in.close();
+            scanner.close();
         }
     }
 }

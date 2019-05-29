@@ -6,6 +6,7 @@ public class ThreadPool {
     private final PoolWorker[] threads; // Trabajador de la piscina
     private final LinkedBlockingQueue<Runnable> queue; // Cola de ejecucion
     // Constructor
+
     public ThreadPool(int nThreads) {
         this.nThreads = nThreads; // Definimos la cantidad de hebras
         this.queue = new LinkedBlockingQueue<Runnable>(50); // Creamos nuestra cola
@@ -16,6 +17,11 @@ public class ThreadPool {
             threads[i].start();
         }
     }
+
+    public int getnThreads() {
+        return nThreads;
+    }
+
     // Metodo para ejecutar las tareas (la clase Process para ser mas especifico)
     public void execute(Runnable task) {
         synchronized (queue) {
