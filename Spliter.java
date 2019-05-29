@@ -119,15 +119,18 @@ public class Spliter {
 		}
 	}
 
-	public static void Encode64(String archivo){
+	public static String Encode64(String archivo){
 		Base64.Encoder encoder = Base64.getMimeEncoder();
+		String resultado;
 		Path original = Paths.get(archivo);
 		Path objetivo = Paths.get(archivo + ".cifrado");
+		resultado = archivo + ".cifrado";
 		try {
 			OutputStream salida = Files.newOutputStream(objetivo);
 			Files.copy(original, encoder.wrap(salida));
+			return resultado;
 		} catch (Exception e) {
-			//TODO
+			return "Error";
 		}
 	}
 
