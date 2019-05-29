@@ -134,7 +134,7 @@ public class Spliter {
 		}
 	}
 
-	public static void Decode64(String archivo){
+	public static String Decode64(String archivo){
 		byte[] datos;
 		Decoder decoder = Base64.getDecoder();
 		String linea;
@@ -151,7 +151,10 @@ public class Spliter {
 			}
 			lector.close();
 			salida.close();
-		} catch(Exception e){}
+			return nombre_arch;
+		} catch(Exception e){
+			return "Error";
+		}
 	}
 	// Codigo de prueba
 	public static void main(String[] args) {
