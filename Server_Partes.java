@@ -64,6 +64,7 @@ public class Server_Partes {
             Hashtable<String, String[]> ARCHIVOS = new Hashtable<String, String[]>();
             Hashtable<String, Boolean> IPS = new Hashtable<String, Boolean>();
             IPS = (Hashtable<String,Boolean>)leer_IP();
+            ARCHIVOS = leer_ARCHIVOS();
             ServerSocket listener = new ServerSocket(59090);
             System.out.println("El servidor esta en marcha...");
             System.out.println("Ctrl + C para salir");
