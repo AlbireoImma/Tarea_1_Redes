@@ -137,6 +137,7 @@ public class Process implements Runnable {
                 } catch (Exception err) {
                     //to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Error\n";
                     //log.write(to_log.getBytes());
+                    System.out.println("Excepcion de lagun tipo");
                 } finally {
                     try {socket.close();} catch (IOException e) {}
                     to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Cerrado\n";
