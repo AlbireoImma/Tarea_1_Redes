@@ -185,6 +185,7 @@ public class Process_Partes implements Runnable {
                                 for (String nombre : lista) {
                                     // Falta revisar si las IP estan disponibles
                                     seleccionado = seleccion[new Random().nextInt(seleccion.length)];
+                                    System.out.println("Enviando: " + nombre + ", hacia: " + seleccionado);
                                     send_file(nombre, seleccionado);
                                     direcciones.add(seleccionado);
                                 }
