@@ -43,7 +43,7 @@ public class Process_Partes implements Runnable {
                 dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
                 System.out.println(dis.readUTF()); // Leemos la entrada y la imprimimos
                 archivo_s.close(); // Cerramos el archivo
-                socket.close();
+                // socket.close();
             } else { // El archivo no existe
                 System.out.println("Archivo No Existe");
                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida
