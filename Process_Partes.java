@@ -28,7 +28,7 @@ public class Process_Partes implements Runnable {
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
             String msg = dis.readUTF(); // Esperamos respuesta del servidor
             System.out.println("Subiendo Archivo...");
-            String Entrada = "put " + nombre;
+            String Entrada = "put " + nombre.split("/")[2];
             dos.writeUTF(Entrada); // Enviamos la entrada al servidor
             File archivo = new File(nombre); // Abrimos el archivo a enviar
             if (archivo.exists()) { // Verificamos la existencia del archivo

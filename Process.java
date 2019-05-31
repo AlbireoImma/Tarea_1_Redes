@@ -98,13 +98,17 @@ public class Process implements Runnable {
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             System.out.println("Peticion de put: " + socket); // Avisamos de la peticion
                             dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada al cliente
+                            System.out.println("dis creado");
                             cantidad = dis.readInt(); // Esperamos un entero por parte del cliente (la cantidad de bytes del archivo a recibir)
+                            System.out.println("tamanio obtenido");
                             if (cantidad > 0) { // Si el entero es mayor que uno el archivo existe
                                 archivo_s = new File("./Server/" + Entrada_parse[1]); // Creamos el archivo
+                                System.out.println("archivo_s creado");
                                 os = new FileOutputStream(archivo_s); // Creamos el stream para escribir en el archivo
                                 Array = new byte[cantidad]; // Creamos un array de bytes que contendra el archivo
                                 dis = new DataInputStream(socket.getInputStream()); // Esperamos por el archivo
                                 dis.readFully(Array); // Escribimos el archivo en el array
+                                System.out.println("Archivo escrito");
                                 os.write(Array); // Pasamos el array al archivo en la parte del servidor
                                 System.out.println("Archivo Obtenido"); // Notificamos que hemos recibido el archivo
                                 os.close(); // Cerramos el archivo (el stream a el)
@@ -137,7 +141,7 @@ public class Process implements Runnable {
                 } catch (Exception err) {
                     //to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Error\n";
                     //log.write(to_log.getBytes());
-                    System.out.println("Excepcion de lagun tipo");
+                    System.out.println("Excepcion de algun tipo");
                 } finally {
                     try {socket.close();} catch (IOException e) {}
                     to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Cerrado\n";
