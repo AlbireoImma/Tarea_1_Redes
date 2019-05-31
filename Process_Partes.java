@@ -23,7 +23,7 @@ import java.util.Random;
 public class Process_Partes implements Runnable {
     public static String send_file(String nombre,String IP){
         try{
-            Socket socket = new Socket(IP, 59090);
+            Socket socket = new Socket(IP, 59091);
             DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
             String msg = dis.readUTF(); // Esperamos respuesta del servidor
@@ -43,10 +43,12 @@ public class Process_Partes implements Runnable {
                 dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
                 System.out.println(dis.readUTF()); // Leemos la entrada y la imprimimos
                 archivo_s.close(); // Cerramos el archivo
+                socket.close();
             } else { // El archivo no existe
                 System.out.println("Archivo No Existe");
                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida
                 dos.writeInt(0); // Enviamos un 0 a forma de no existencia al servidor
+                socket.close();
             }
             return "Archivo";
         } catch(Exception e){

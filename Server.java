@@ -5,7 +5,7 @@ public class Server {
     public static void main(String[] args) throws IOException {
     	// Intentamos abrir el puerto del servidor
         try {
-            ServerSocket listener = new ServerSocket(59090);
+            ServerSocket listener = new ServerSocket(59091);
             System.out.println("El servidor esta en marcha...");
             System.out.println("Ctrl + C para salir");
             // Creamos nuestra piscina con 50 hebras
