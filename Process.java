@@ -112,6 +112,7 @@ public class Process implements Runnable {
                                 os.write(Array); // Pasamos el array al archivo en la parte del servidor
                                 System.out.println("Archivo Obtenido"); // Notificamos que hemos recibido el archivo
                                 os.close(); // Cerramos el archivo (el stream a el)
+                                System.out.println("Archivo cerrado");
                                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                                 dos.writeUTF("Solicitud Completada"); // Enviamos un string al cliente
                             } else { // El archivo no existe
