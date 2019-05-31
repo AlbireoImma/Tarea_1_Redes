@@ -173,7 +173,7 @@ public class Process_Partes implements Runnable {
                                 os.write(Array); // Pasamos el array al archivo en la parte del servidor
                                 System.out.println("Archivo Obtenido"); // Notificamos que hemos recibido el archivo
                                 os.close(); // Cerramos el archivo (el stream a el)
-                                Encode64 coder = new Encode64(Entrada_parse[1]);
+                                Encode64 coder = new Encode64("./Server/" + Entrada_parse[1]);
                                 String codificado = coder.codificar();
                                 Spliter separador = new Spliter(codificado);
                                 ArrayList<String> lista = separador.Separar();
