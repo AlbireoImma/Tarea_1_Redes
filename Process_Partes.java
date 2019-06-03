@@ -84,6 +84,39 @@ public class Process_Partes implements Runnable {
             return "Error";
         }
     }
+    public static int get_file(String nombre, String IP){
+        try {
+            Socket socket = new Socket(IP, 59091);
+            DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
+            System.out.println("Obteniendo Archivo...");
+            String Entrada = "get " + nombre;
+            int cantidad;
+            File archivo;
+            FileOutputStream os;
+            byte[] Array;
+            dos.writeUTF(Entrada); // Enviamos la entrada al servidor
+            dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
+            cantidad = dis.readInt(); // Leemos la respuesta del servidor
+            if (cantidad > 0) { // El archivo existe
+                archivo = new File("./Partes/" + nombre); // Creamos el archivo
+                os = new FileOutputStream(archivo); // Creamos el stream para escribir el archivo
+                Array = new byte[cantidad]; // Creamos el array para almacenar el archivo
+                dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
+                dis.readFully(Array); // Guardamos el archivo en el array
+                os.write(Array); // Escribimos el archivo
+                System.out.println("Archivo Obtenido");
+                os.close(); // Cerramos el archivo
+            } else { // El archivo no existe
+                System.out.println("Archivo Inexistente");
+                return -1;
+            }
+            return 0;
+        } catch (Exception e) {
+            //TODO: handle exception
+            return -1;
+        }
+    }
     public static int del_file(String archivo){
         return 0;
     }
@@ -93,7 +126,7 @@ public class Process_Partes implements Runnable {
     public static boolean Ping(String direccion){
 		try{
 			InetAddress res = InetAddress.getByName(direccion);
-			boolean respuesta = res.isReachable(20000);
+			boolean respuesta = res.isReachable(1000);
 			System.out.println("Alcanzable? -> " + respuesta);
 			return respuesta;
 		} catch (Exception e){
@@ -166,22 +199,42 @@ public class Process_Partes implements Runnable {
                             }
                         } else if (Entrada_parse[0].equals("get")) { // Si el verbo es un get 
                             //TODO
-                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
-                            log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
-                            System.out.println("Peticion de get: " + socket); // Avisamos de la peticion
-                            archivo_s = new File("./Server/" + Entrada_parse[1]); // Obtenemos una variable File del archivo solicitado
-                            if (archivo_s.exists()){ // Comprobamos si el archivo existe
-                                archivo = new RandomAccessFile("./Server/" + Entrada_parse[1], "r"); // Abrimos el archivo en modo lectura
-                                Contador = (int) archivo.length(); // Obtenemos el largo del archivo (la cantidad de bytes)
-                                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
-                                dos.writeInt(Contador); // Enviamos el largo del archivo al cliente
-                                Array = new byte[Contador]; // Creamos un array para almacenar el archivo
-                                archivo.readFully(Array); // Escribimos el archivo al array
-                                dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
-                                dos.write(Array); // Enviamos el array con el archivo en el
-                                archivo.close(); // Cerramos el archivo
-                                System.out.println("Archivo Enviado"); // Notificamos del envio
-                            } else { // El archivo no existe
+                            ARCHIVOS = leer_ARCHIVOS();
+                            Boolean trap = ARCHIVOS.containsKey(Entrada_parse[1]);
+                            if (trap) {
+                                String[] respuesta = ARCHIVOS.get(Entrada_parse[1]);
+                                int parts = Integer.parseInt(respuesta[0]);
+                                ArrayList<String> nombres = new ArrayList<String>();
+                                for (int i = 0; i < parts; i++) {
+                                    nombres.add(Entrada_parse + ".cifrado." + (i+1) + ".split");
+                                }
+                                for (int i = 0; i < parts; i++) {
+                                    get_file(nombres.get(i), respuesta[i+1]);
+                                }
+                                String unido = Spliter.Unir(nombres);
+                                Decode64 decoder = new Decode64(unido);
+                                String deco = decoder.decodificar();
+                                to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
+                                log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
+                                System.out.println("Peticion de get: " + socket); // Avisamos de la peticion
+                                archivo_s = new File(deco); // Obtenemos una variable File del archivo solicitado
+                                if (archivo_s.exists()){ // Comprobamos si el archivo existe
+                                    archivo = new RandomAccessFile(deco, "r"); // Abrimos el archivo en modo lectura
+                                    Contador = (int) archivo.length(); // Obtenemos el largo del archivo (la cantidad de bytes)
+                                    dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                                    dos.writeInt(Contador); // Enviamos el largo del archivo al cliente
+                                    Array = new byte[Contador]; // Creamos un array para almacenar el archivo
+                                    archivo.readFully(Array); // Escribimos el archivo al array
+                                    dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                                    dos.write(Array); // Enviamos el array con el archivo en el
+                                    archivo.close(); // Cerramos el archivo
+                                    System.out.println("Archivo Enviado"); // Notificamos del envio    
+                                } else {
+                                    System.out.println("Archivo No Existe"); // Notificamos de la no existencia
+                                    dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                                    dos.writeInt(0); // Enviamos un 0 al cliente a modo que el archivo no existe
+                                } // El archivo no existe
+                            } else {
                                 System.out.println("Archivo No Existe"); // Notificamos de la no existencia
                                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                                 dos.writeInt(0); // Enviamos un 0 al cliente a modo que el archivo no existe

@@ -66,7 +66,6 @@ public class Client {
                             } else { // El archivo no existe
                                 System.out.println("Archivo Inexistente");
                             }
-
                         } else if (Entrada_parse[0].equals("put")) { // Verbo put
                             System.out.println("Subiendo Archivo...");
                             dos.writeUTF(Entrada); // Enviamos la entrada al servidor

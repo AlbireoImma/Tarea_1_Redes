@@ -1,5 +1,5 @@
 ftp:
-	javac ./*.java
+	javac -Xlint ./*.java
 run_server:
 	java Server
 run_cliente:
