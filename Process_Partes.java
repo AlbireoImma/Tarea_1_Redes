@@ -5,8 +5,11 @@ Importes necesarios para el funcionamiento de la clase
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.InetAddress;
@@ -17,10 +20,36 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.Random;
-
+@SuppressWarnings("unchecked") // Necesario por cast en runtime [De objeto a Hashtable]
 
 
 public class Process_Partes implements Runnable {
+    public static void escribir_ARCHIVOS(Hashtable<String, String[]> ARCHIVOS){
+        try{
+            FileOutputStream escritura = new FileOutputStream("ARCHIVOS.ser");
+            ObjectOutputStream ob_ser = new ObjectOutputStream(escritura);
+            ob_ser.writeObject(ARCHIVOS);
+            ob_ser.close();
+            escritura.close();
+        } catch (Exception e){
+            // TODO
+        }
+    }
+    public static Hashtable<String,String[]> leer_ARCHIVOS(){
+        try {
+            FileInputStream salida = new FileInputStream("ARCHIVOS.ser");
+            ObjectInputStream objeto = new ObjectInputStream(salida);
+            Object info = objeto.readObject();
+            objeto.close();
+            salida.close();
+            return (Hashtable<String,String[]>)info;
+        } catch (Exception e) {
+            // TODO
+            Hashtable<String,String[]> info = new Hashtable<String,String[]>();
+            return info;
+
+        }
+    }
     public static String send_file(String nombre,String IP){
         try{
             Socket socket = new Socket(IP, 59091);
@@ -190,6 +219,8 @@ public class Process_Partes implements Runnable {
                                     direcciones.add(seleccionado);
                                 }
                                 ARCHIVOS.put(Entrada_parse[1], direcciones.toArray(new String[0]));
+                                escribir_ARCHIVOS(ARCHIVOS);
+                                ARCHIVOS = leer_ARCHIVOS();
                                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                                 dos.writeUTF("Solicitud Completada"); // Enviamos un string al cliente
                             } else { // El archivo no existe
