@@ -176,6 +176,10 @@ public class Process_Partes implements Runnable {
                     while (Entrada.length() > 0) { // Mientras la entrada del cliente no sea nula
                         if (Entrada.equals("ls")) { // Si el verbo es un ls 
                             //TODO
+                            ARCHIVOS = leer_ARCHIVOS();
+                            for (int i=0; i < (IPS.size()); i++){
+                                System.out.println(IPS.keySet().toArray(new String[IPS.size()])[i]);
+                            }
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             folder = new File("./Server"); // Abrimos el directorio del servidor
