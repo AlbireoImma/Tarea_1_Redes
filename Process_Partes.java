@@ -178,7 +178,10 @@ public class Process_Partes implements Runnable {
                             //TODO
                             ARCHIVOS = leer_ARCHIVOS();
                             for (int i=0; i < (IPS.size()); i++){
-                                System.out.println(IPS.keySet().toArray(new String[IPS.size()])[i]);
+                                String ip = IPS.keySet().toArray(new String[IPS.size()])[i];
+                                System.out.println(ip);
+                                System.out.println(Ping(ip));
+                                System.out.println(Ping("156.245.682.1"));
                             }
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
