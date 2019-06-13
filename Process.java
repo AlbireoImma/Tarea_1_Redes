@@ -61,6 +61,7 @@ public class Process implements Runnable {
                             for (File file : listOfFiles) {
                                 if (file.isFile()) {
                                     ls_aux[Contador] = file.getName();
+                                    System.out.println(file.getName());
                                     Contador++;
                                 }
                             }
