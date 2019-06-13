@@ -136,6 +136,7 @@ public class Process_Partes implements Runnable {
             while (cantidad > 0) { // recibimos los nombres de archivos del servidor
                 dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
                 System.out.println(dis.readUTF()); // Imprimimos los nombres de los archivos
+                System.out.println(cantidad);
                 cantidad--; // Restamos a la cantidad faltante de archivos por uno
             }
             System.out.println("hasta aqui ok");
