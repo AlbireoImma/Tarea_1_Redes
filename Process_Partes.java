@@ -126,7 +126,7 @@ public class Process_Partes implements Runnable {
             Socket socket = new Socket(IP, 59091);
             DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
-            int cantidad; // variable utilizada para almacenar cifras relevantes
+            int cantidad = 0; // variable utilizada para almacenar cifras relevantes
             String Entrada = "ls"; // Variable utilizada para la entrada de comandos al servidor
             System.out.println("Obteniendo Directorio...");
             dos.writeUTF(Entrada); // Enviamos la entrada al servidor
