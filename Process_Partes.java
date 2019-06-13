@@ -141,6 +141,7 @@ public class Process_Partes implements Runnable {
             }
             System.out.println("hasta aqui ok");
             System.out.println("Directorio Obtenido..."); // Notificamos la obtencion del directorio
+            socket.close();
             return 1;
             // System.out.println(dis.readUTF());
         }
