@@ -120,31 +120,33 @@ public class Process_Partes implements Runnable {
     public static int del_file(String archivo){
         return 0;
     }
-    public static void ls(String IP){
+
+    public static int ls(String IP){
+        try{
         Socket socket = new Socket(IP, 59091);
         DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
         DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
-        System.out.println("Obteniendo Archivo...");
-        String Entrada = "ls";
+        int cantidad; // variable utilizada para almacenar cifras relevantes
+        String Entrada = "ls"; // Variable utilizada para la entrada de comandos al servidor
+        System.out.println("Obteniendo Directorio...");
         dos.writeUTF(Entrada); // Enviamos la entrada al servidor
-        int Contador = 0; // Fijamos nuestro contador
-        System.out.println("Peticion de ls: " + socket); // Avisamos de la peticion
-        // En este for obtenemos la cantidad de archivos y un arreglo con sus nombres
-        for (File file : listOfFiles) {
-            if (file.isFile()) {
-                ls_aux[Contador] = file.getName();
-                Contador++;
-            }
+        dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
+        cantidad = dis.readInt(); // Leemos la respuesta del servidor (cantidad de archivos)
+        while (cantidad > 0) { // recibimos los nombres de archivos del servidor
+            dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
+            System.out.println(dis.readUTF()); // Imprimimos los nombres de los archivos
+            cantidad--; // Restamos a la cantidad faltante de archivos por uno
         }
-        dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
-        dos.writeInt(Contador); // Enviamos la cantidad de archivos al cliente
-        // Enviamos los nombres de los archivos al servidor uno a la vez
-        while (Contador > 0) {
-            dos = new DataOutputStream(socket.getOutputStream());
-            dos.writeUTF(ls_aux[Contador - 1]);
-            Contador--;
+        System.out.println("Directorio Obtenido..."); // Notificamos la obtencion del directorio
+        return 1;
+        // System.out.println(dis.readUTF());
+        }
+        catch(Exception e) {
+            //TODO: handle exception
+            return -1;
         }
     }
+
     public static boolean Ping(String direccion){
 		try{
 			InetAddress res = InetAddress.getByName(direccion);
@@ -201,8 +203,9 @@ public class Process_Partes implements Runnable {
                             ARCHIVOS = leer_ARCHIVOS();
                             for (int i=0; i < (IPS.size()); i++){
                                 String ip = IPS.keySet().toArray(new String[IPS.size()])[i];
-                                System.out.println(ip);
-                                System.out.println(Ping(ip));
+                                if(Ping(ip)){
+                                    ls(ip);
+                                };
                             }
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
