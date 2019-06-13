@@ -132,11 +132,13 @@ public class Process_Partes implements Runnable {
         dos.writeUTF(Entrada); // Enviamos la entrada al servidor
         dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
         cantidad = dis.readInt(); // Leemos la respuesta del servidor (cantidad de archivos)
+        System.out.println("hasta aqui ok " + cantidad);
         while (cantidad > 0) { // recibimos los nombres de archivos del servidor
             dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
             System.out.println(dis.readUTF()); // Imprimimos los nombres de los archivos
             cantidad--; // Restamos a la cantidad faltante de archivos por uno
         }
+        System.out.println("hasta aqui ok");
         System.out.println("Directorio Obtenido..."); // Notificamos la obtencion del directorio
         return 1;
         // System.out.println(dis.readUTF());
@@ -207,6 +209,7 @@ public class Process_Partes implements Runnable {
                                     ls(ip);
                                 };
                             }
+                            System.out.println("Salimos del for del ls");
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             folder = new File("./Server"); // Abrimos el directorio del servidor
