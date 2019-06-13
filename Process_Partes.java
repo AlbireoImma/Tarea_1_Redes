@@ -120,8 +120,30 @@ public class Process_Partes implements Runnable {
     public static int del_file(String archivo){
         return 0;
     }
-    public static void ls(){
-        
+    public static void ls(String IP){
+        Socket socket = new Socket(IP, 59091);
+        DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
+        DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
+        System.out.println("Obteniendo Archivo...");
+        String Entrada = "ls";
+        dos.writeUTF(Entrada); // Enviamos la entrada al servidor
+        int Contador = 0; // Fijamos nuestro contador
+        System.out.println("Peticion de ls: " + socket); // Avisamos de la peticion
+        // En este for obtenemos la cantidad de archivos y un arreglo con sus nombres
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+                ls_aux[Contador] = file.getName();
+                Contador++;
+            }
+        }
+        dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+        dos.writeInt(Contador); // Enviamos la cantidad de archivos al cliente
+        // Enviamos los nombres de los archivos al servidor uno a la vez
+        while (Contador > 0) {
+            dos = new DataOutputStream(socket.getOutputStream());
+            dos.writeUTF(ls_aux[Contador - 1]);
+            Contador--;
+        }
     }
     public static boolean Ping(String direccion){
 		try{
@@ -181,7 +203,6 @@ public class Process_Partes implements Runnable {
                                 String ip = IPS.keySet().toArray(new String[IPS.size()])[i];
                                 System.out.println(ip);
                                 System.out.println(Ping(ip));
-                                System.out.println(Ping("156.245.682.1"));
                             }
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
