@@ -123,25 +123,25 @@ public class Process_Partes implements Runnable {
 
     public static int ls(String IP){
         try{
-        Socket socket = new Socket(IP, 59091);
-        DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
-        DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
-        int cantidad; // variable utilizada para almacenar cifras relevantes
-        String Entrada = "ls"; // Variable utilizada para la entrada de comandos al servidor
-        System.out.println("Obteniendo Directorio...");
-        dos.writeUTF(Entrada); // Enviamos la entrada al servidor
-        dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
-        cantidad = dis.readInt(); // Leemos la respuesta del servidor (cantidad de archivos)
-        System.out.println("hasta aqui ok " + cantidad);
-        while (cantidad > 0) { // recibimos los nombres de archivos del servidor
+            Socket socket = new Socket(IP, 59091);
+            DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
+            int cantidad; // variable utilizada para almacenar cifras relevantes
+            String Entrada = "ls"; // Variable utilizada para la entrada de comandos al servidor
+            System.out.println("Obteniendo Directorio...");
+            dos.writeUTF(Entrada); // Enviamos la entrada al servidor
             dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
-            System.out.println(dis.readUTF()); // Imprimimos los nombres de los archivos
-            cantidad--; // Restamos a la cantidad faltante de archivos por uno
-        }
-        System.out.println("hasta aqui ok");
-        System.out.println("Directorio Obtenido..."); // Notificamos la obtencion del directorio
-        return 1;
-        // System.out.println(dis.readUTF());
+            cantidad = dis.readInt(); // Leemos la respuesta del servidor (cantidad de archivos)
+            System.out.println("hasta aqui ok " + cantidad);
+            while (cantidad > 0) { // recibimos los nombres de archivos del servidor
+                dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada y lo esperamos
+                System.out.println(dis.readUTF()); // Imprimimos los nombres de los archivos
+                cantidad--; // Restamos a la cantidad faltante de archivos por uno
+            }
+            System.out.println("hasta aqui ok");
+            System.out.println("Directorio Obtenido..."); // Notificamos la obtencion del directorio
+            return 1;
+            // System.out.println(dis.readUTF());
         }
         catch(Exception e) {
             //TODO: handle exception
