@@ -117,8 +117,21 @@ public class Process_Partes implements Runnable {
             return -1;
         }
     }
-    public static int del_file(String archivo){
-        return 0;
+    public static int del_file(String archivo, String IP){
+        try{
+            Socket socket = new Socket(IP, 59091);
+            DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
+            String Entrada = "del "+archivo; // Variable utilizada para la entrada de comandos al servidor
+            System.out.println("Eliminando Archivo...");
+            dos.writeUTF(Entrada); // Enviamos la entrada al servidor
+            dis = new DataInputStream(socket.getInputStream());
+            System.out.println(dis.readUTF());
+            return 0;
+        } catch (Exception e){
+            return -1;
+        }
+        
     }
 
     public static int ls(String IP){
@@ -317,6 +330,20 @@ public class Process_Partes implements Runnable {
                             }
                         } else if (Entrada_parse[0].equals("del")) { // Si el verbo es del
                             // TODO
+
+                            ARCHIVOS = leer_ARCHIVOS();
+                            Boolean trap = ARCHIVOS.containsKey(Entrada_parse[1]);
+                            if (trap) {
+                                String[] respuesta = ARCHIVOS.get(Entrada_parse[1]);
+                                int parts = Integer.parseInt(respuesta[0]);
+                                ArrayList<String> nombres = new ArrayList<String>();
+                                for (int i = 0; i < parts; i++) {
+                                    nombres.add(Entrada_parse + ".cifrado." + (i+1) + ".split");
+                                }
+                                for (int i = 0; i < parts; i++) {
+                                    del_file(nombres.get(i), respuesta[i+1]);
+                                }
+
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             System.out.println("Peticion de del: " + socket); // Avisamos de la peticion
