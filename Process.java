@@ -68,6 +68,7 @@ public class Process implements Runnable {
                             System.out.println("Terminamos de revisar archivos"+ Contador);
                             dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                             dos.writeInt(Contador); // Enviamos la cantidad de archivos al cliente
+                            System.out.println("enviamos contador: "+Contador);
                             // Enviamos los nombres de los archivos al servidor uno a la vez
                             while (Contador > 0) {
                                 dos = new DataOutputStream(socket.getOutputStream());
