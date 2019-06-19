@@ -363,7 +363,7 @@ public class Process_Partes implements Runnable {
                         dis = new DataInputStream(socket.getInputStream());
                         Entrada = dis.readUTF(); // Creamos un stream de entrada al cliente (Esperamos por otro comando)
                         Entrada_parse = Entrada.split(" "); // Parseamos la entrada
-                    }
+                    }}
                 } catch (Exception err) {
                     //to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Error\n";
                     //log.write(to_log.getBytes());
@@ -376,4 +376,5 @@ public class Process_Partes implements Runnable {
             log.close();
         } catch (IOException e) {}
     }
+}
 
