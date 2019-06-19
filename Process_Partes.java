@@ -247,8 +247,8 @@ public class Process_Partes implements Runnable {
                             dos.writeInt(contador); // Enviamos la cantidad de archivos al cliente
                             System.out.println("Antes del while: ok");
                             while (contador > 0) {
-                                dos = new DataOutputStream(socket.getOutputStream());
                                 System.out.println(nombres_archivos.get(contador));
+                                dos = new DataOutputStream(socket.getOutputStream());
                                 dos.writeUTF(nombres_archivos.get(contador));
                                 contador--;
                             }
