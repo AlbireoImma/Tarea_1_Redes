@@ -218,12 +218,20 @@ public class Process_Partes implements Runnable {
                         if (Entrada.equals("ls")) { // Si el verbo es un ls 
                             //TODO
                             ARCHIVOS = leer_ARCHIVOS();
-                            for (int i=0; i < (IPS.size()); i++){
-                                String ip = IPS.keySet().toArray(new String[IPS.size()])[i];
+                            String[] respuesta = ARCHIVOS.get(Entrada_parse[1]);
+                            for (int i=0; i < (respuesta.length); i++){
+                                String ip = respuesta[i+1];
+                                System.out.println(ip);
                                 if(Ping(ip)){
                                     ls(ip);
                                 };
                             }
+                            /*for (int i=0; i < (IPS.size()); i++){
+                                String ip = IPS.keySet().toArray(new String[IPS.size()])[i];
+                                if(Ping(ip)){
+                                    ls(ip);
+                                };
+                            }*/
                             System.out.println("Salimos del for del ls");
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
