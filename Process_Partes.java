@@ -246,11 +246,12 @@ public class Process_Partes implements Runnable {
                             System.out.println("HASTA AQUI OKIDOKI");
                             dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                             dos.writeInt(contador); // Enviamos la cantidad de archivos al cliente
+                            
                             System.out.println("Antes del while: ok"+contador);
                             while (contador > 0) {
-                                System.out.println(nombres_archivos.get(contador));
+                                System.out.println(nombres_archivos.get(contador-1));
                                 dos = new DataOutputStream(socket.getOutputStream());
-                                dos.writeUTF(nombres_archivos.get(contador));
+                                dos.writeUTF(nombres_archivos.get(contador-1));
                                 contador--;
                             }
                             System.out.println("despues del while: ok");
