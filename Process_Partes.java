@@ -19,8 +19,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
 @SuppressWarnings("unchecked") // Necesario por cast en runtime [De objeto a Hashtable]
 
 
@@ -221,6 +224,9 @@ public class Process_Partes implements Runnable {
                             ARCHIVOS = leer_ARCHIVOS();
                             System.out.println("entre al ls! server_partes");
                             Set<String> keys = ARCHIVOS.keySet();
+                            ArrayList<String> nombres_archivos= new ArrayList<>();
+                            nombres_archivos.ensureCapacity(keys.size());
+                            Integer contador = 0;
                             for(String key: keys){
                                 String[] resp = ARCHIVOS.get(key); 
                                 System.out.println("Value of "+key+" is: "+resp);
@@ -231,8 +237,20 @@ public class Process_Partes implements Runnable {
                                 }
                                 if (estado){
                                     System.out.println(key);
+                                    nombres_archivos.add(key);
+                                    contador++;
+                                    
                                 }
                             }
+                            dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                            dos.writeInt(contador); // Enviamos la cantidad de archivos al cliente
+                            while (contador > 0) {
+                                dos = new DataOutputStream(socket.getOutputStream());
+                                dos.writeUTF(nombres_archivos.get(contador));
+                                contador--;
+                            }
+                            
+
                             /*for (int i=0; i < (IPS.size()); i++){
                                 String ip = IPS.keySet().toArray(new String[IPS.size()])[i];
                                 if(Ping(ip)){
@@ -242,26 +260,26 @@ public class Process_Partes implements Runnable {
                             //System.out.println("Salimos del for del ls");
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
-                            folder = new File("./Server"); // Abrimos el directorio del servidor
-                            listOfFiles = folder.listFiles(); // Listamos los archivos
-                            Contador = 0; // Fijamos nuestro contador
-                            System.out.println("Peticion de ls: " + socket); // Avisamos de la peticion
+                            //folder = new File("./Server"); // Abrimos el directorio del servidor
+                            //listOfFiles = folder.listFiles(); // Listamos los archivos
+                            //Contador = 0; // Fijamos nuestro contador
+                            //System.out.println("Peticion de ls: " + socket); // Avisamos de la peticion
                             // En este for obtenemos la cantidad de archivos y un arreglo con sus nombres
-                            for (File file : listOfFiles) {
-                                if (file.isFile()) {
-                                    ls_aux[Contador] = file.getName();
-                                    Contador++;
-                                }
-                            }
-                            dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
-                            dos.writeInt(Contador); // Enviamos la cantidad de archivos al cliente
+                            //for (File file : listOfFiles) {
+                            //    if (file.isFile()) {
+                            //        ls_aux[Contador] = file.getName();
+                            //        Contador++;
+                            //    }
+                            //}
+                            //dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
+                            //dos.writeInt(Contador); // Enviamos la cantidad de archivos al cliente
                             
                             // Enviamos los nombres de los archivos al servidor uno a la vez
-                            while (Contador > 0) {
-                                dos = new DataOutputStream(socket.getOutputStream());
-                                dos.writeUTF(ls_aux[Contador - 1]);
-                                Contador--;
-                            }
+                            //while (Contador > 0) {
+                            //    dos = new DataOutputStream(socket.getOutputStream());
+                            //    dos.writeUTF(ls_aux[Contador - 1]);
+                            //    Contador--;
+                            //}
                         } else if (Entrada_parse[0].equals("get")) { // Si el verbo es un get 
                             //TODO
                             ARCHIVOS = leer_ARCHIVOS();
