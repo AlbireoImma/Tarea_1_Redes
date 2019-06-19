@@ -222,14 +222,15 @@ public class Process_Partes implements Runnable {
                             System.out.println("entre al ls! server_partes");
                             Set<String> keys = ARCHIVOS.keySet();
                             for(String key: keys){
-                                System.out.println("Value of "+key+" is: "+ARCHIVOS.get(key));
-                                int parts = Integer.parseInt(ARCHIVOS.get(key)[0]);
+                                String[] resp = ARCHIVOS.get(key); 
+                                System.out.println("Value of "+key+" is: "+resp);
+                                int parts = Integer.parseInt(resp[0]);
                                 boolean estado = true;
                                 for (int i = 0; i < parts; i++) {
-                                    if (!Ping(ARCHIVOS.get(key)[i+1])) estado=false;
+                                    if (!Ping(resp[i+1])) estado=false;
                                 }
                                 if (estado){
-                                    System.out.println(ARCHIVOS.get(key));
+                                    System.out.println(key);
                                 }
                             }
                             /*for (int i=0; i < (IPS.size()); i++){
@@ -238,7 +239,7 @@ public class Process_Partes implements Runnable {
                                     ls(ip);
                                 };
                             }*/
-                            /*System.out.println("Salimos del for del ls");
+                            //System.out.println("Salimos del for del ls");
                             to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
                             log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             folder = new File("./Server"); // Abrimos el directorio del servidor
@@ -254,12 +255,13 @@ public class Process_Partes implements Runnable {
                             }
                             dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                             dos.writeInt(Contador); // Enviamos la cantidad de archivos al cliente
+                            
                             // Enviamos los nombres de los archivos al servidor uno a la vez
                             while (Contador > 0) {
                                 dos = new DataOutputStream(socket.getOutputStream());
                                 dos.writeUTF(ls_aux[Contador - 1]);
                                 Contador--;
-                            }*/
+                            }
                         } else if (Entrada_parse[0].equals("get")) { // Si el verbo es un get 
                             //TODO
                             ARCHIVOS = leer_ARCHIVOS();
