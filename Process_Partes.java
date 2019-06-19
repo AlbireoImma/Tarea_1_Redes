@@ -248,6 +248,7 @@ public class Process_Partes implements Runnable {
                             System.out.println("Antes del while: ok");
                             while (contador > 0) {
                                 dos = new DataOutputStream(socket.getOutputStream());
+                                System.out.println(nombres_archivos.get(contador));
                                 dos.writeUTF(nombres_archivos.get(contador));
                                 contador--;
                             }
