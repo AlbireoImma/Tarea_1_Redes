@@ -226,7 +226,7 @@ public class Process_Partes implements Runnable {
                             Set<String> keys = ARCHIVOS.keySet();
                             ArrayList<String> nombres_archivos= new ArrayList<>();
                             nombres_archivos.ensureCapacity(keys.size());
-                            Integer contador = 0;
+                            int contador = 0;
                             for(String key: keys){
                                 String[] resp = ARCHIVOS.get(key); 
                                 System.out.println("Value of "+key+" is: "+resp);
