@@ -377,4 +377,3 @@ public class Process_Partes implements Runnable {
         } catch (IOException e) {}
     }
 
-}
