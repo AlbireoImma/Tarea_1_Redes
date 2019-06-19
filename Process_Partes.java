@@ -218,6 +218,7 @@ public class Process_Partes implements Runnable {
                         if (Entrada.equals("ls")) { // Si el verbo es un ls 
                             //TODO
                             ARCHIVOS = leer_ARCHIVOS();
+                            System.out.println("entre al ls! server_partes");
                             String[] respuesta = ARCHIVOS.get(Entrada_parse[1]);
                             for (int i=0; i < (respuesta.length); i++){
                                 String ip = respuesta[i+1];
