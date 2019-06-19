@@ -236,8 +236,8 @@ public class Process_Partes implements Runnable {
                                     if (!Ping(resp[i+1])) estado=false;
                                 }
                                 if (estado){
-                                    System.out.println(key);
                                     nombres_archivos.add(key);
+                                    System.out.println(key);
                                     contador++;
                                     
                                 }
