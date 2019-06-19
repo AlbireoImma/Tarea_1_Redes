@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.Random;
+import java.util.Set;
 @SuppressWarnings("unchecked") // Necesario por cast en runtime [De objeto a Hashtable]
 
 
@@ -219,13 +220,9 @@ public class Process_Partes implements Runnable {
                             //TODO
                             ARCHIVOS = leer_ARCHIVOS();
                             System.out.println("entre al ls! server_partes");
-                            String[] respuesta = ARCHIVOS.get(Entrada_parse[1]);
-                            for (int i=0; i < (respuesta.length); i++){
-                                String ip = respuesta[i+1];
-                                System.out.println(ip);
-                                if(Ping(ip)){
-                                    ls(ip);
-                                };
+                            Set<String> keys = ARCHIVOS.keySet();
+                            for(String key: keys){
+                                System.out.println("Value of "+key+" is: "+ARCHIVOS.get(key));
                             }
                             /*for (int i=0; i < (IPS.size()); i++){
                                 String ip = IPS.keySet().toArray(new String[IPS.size()])[i];
