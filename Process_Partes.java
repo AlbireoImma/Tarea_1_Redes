@@ -221,15 +221,16 @@ public class Process_Partes implements Runnable {
                     while (Entrada.length() > 0) { // Mientras la entrada del cliente no sea nula
                         if (Entrada.equals("ls")) { // Si el verbo es un ls 
                             //TODO
+                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
+                            log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
                             ARCHIVOS = leer_ARCHIVOS();
-                            System.out.println("entre al ls! server_partes");
                             Set<String> keys = ARCHIVOS.keySet();
                             ArrayList<String> nombres_archivos= new ArrayList<>();
                             nombres_archivos.ensureCapacity(keys.size());
                             int contador = 0;
                             for(String key: keys){
                                 String[] resp = ARCHIVOS.get(key); 
-                                System.out.println("Value of "+key+" is: "+resp);
+                                //System.out.println("Value of "+key+" is: "+resp);
                                 int parts = Integer.parseInt(resp[0]);
                                 boolean estado = true;
                                 for (int i = 0; i < parts; i++) {
@@ -243,49 +244,17 @@ public class Process_Partes implements Runnable {
                                 }
                             }
                             nombres_archivos.ensureCapacity(contador);
-                            System.out.println("HASTA AQUI OKIDOKI");
                             dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                             dos.writeInt(contador); // Enviamos la cantidad de archivos al cliente
                             
-                            System.out.println("Antes del while: ok"+contador);
                             while (contador > 0) {
                                 System.out.println(nombres_archivos.get(contador-1));
                                 dos = new DataOutputStream(socket.getOutputStream());
                                 dos.writeUTF(nombres_archivos.get(contador-1));
                                 contador--;
                             }
-                            System.out.println("despues del while: ok");
                             
-
-                            /*for (int i=0; i < (IPS.size()); i++){
-                                String ip = IPS.keySet().toArray(new String[IPS.size()])[i];
-                                if(Ping(ip)){
-                                    ls(ip);
-                                };
-                            }*/
-                            //System.out.println("Salimos del for del ls");
-                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
-                            log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
-                            //folder = new File("./Server"); // Abrimos el directorio del servidor
-                            //listOfFiles = folder.listFiles(); // Listamos los archivos
-                            //Contador = 0; // Fijamos nuestro contador
-                            //System.out.println("Peticion de ls: " + socket); // Avisamos de la peticion
-                            // En este for obtenemos la cantidad de archivos y un arreglo con sus nombres
-                            //for (File file : listOfFiles) {
-                            //    if (file.isFile()) {
-                            //        ls_aux[Contador] = file.getName();
-                            //        Contador++;
-                            //    }
-                            //}
-                            //dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
-                            //dos.writeInt(Contador); // Enviamos la cantidad de archivos al cliente
                             
-                            // Enviamos los nombres de los archivos al servidor uno a la vez
-                            //while (Contador > 0) {
-                            //    dos = new DataOutputStream(socket.getOutputStream());
-                            //    dos.writeUTF(ls_aux[Contador - 1]);
-                            //    Contador--;
-                            //}
                         } else if (Entrada_parse[0].equals("get")) { // Si el verbo es un get 
                             //TODO
                             ARCHIVOS = leer_ARCHIVOS();
@@ -370,7 +339,9 @@ public class Process_Partes implements Runnable {
                             }
                         } else if (Entrada_parse[0].equals("del")) { // Si el verbo es del
                             // TODO
-
+                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
+                            log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
+                            System.out.println("Peticion de del: " + socket); // Avisamos de la peticion
                             ARCHIVOS = leer_ARCHIVOS();
                             Boolean trap = ARCHIVOS.containsKey(Entrada_parse[1]);
                             if (trap) {
@@ -383,14 +354,9 @@ public class Process_Partes implements Runnable {
                                 for (int i = 0; i < parts; i++) {
                                     del_file(nombres.get(i), respuesta[i+1]);
                                 }
-
-                            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + Entrada + "\n"; // Armamos el string para el log
-                            log.write(to_log.getBytes()); // Escribimos el string en el archivo de log
-                            System.out.println("Peticion de del: " + socket); // Avisamos de la peticion
-                            archivo_s = new File("./Server/" + Entrada_parse[1]); // Creamos el acceso al archivo
-                            if (archivo_s.delete()) { // Verificamos si el archivo existe
                                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                                 dos.writeUTF("Solicitud Completada"); // Enviamos un string al cliente
+                            ARCHIVOS.remove(Entrada_parse[1]);
                             } else { // El archivo no existe
                                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
                                 dos.writeUTF("Solicitud Fallida"); // Enviamos un string al cliente
