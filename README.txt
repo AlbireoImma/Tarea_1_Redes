@@ -1,9 +1,10 @@
 Integrantes:
 - Francisco Abarca 201673552-6
-- 
+- Juan Esclaona 201373551-7
 
 !! Para la compilacion basta con hacer -> make ftp
-!! Para iniciar el servidor se necesita hacer -> make run_server
+!! Para iniciar el servidor esclavo se necesita hacer -> make run_server
+!! Para iniciar el servidor intermedio se necesita hacer -> make run_server_partes
 !! Para iniciar un cliente se debe hacer -> make run_cliente
 !! Para limpiar los archivos innecesarios hacer -> make clean
 !! Para eliminar el log -> make clean_log
