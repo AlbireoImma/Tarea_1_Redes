@@ -2,6 +2,10 @@ ftp:
 	javac -Xlint ./*.java
 run_server:
 	java Server
+	
+run_server_partes:
+	java Server_Partes
+	
 run_cliente:
 	java Client
 clean:
