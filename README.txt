@@ -1,6 +1,6 @@
 Integrantes:
 - Francisco Abarca 201673552-6
-- Juan Esclaona 201373551-7
+- Juan Escalona 201373551-7
 
 !! Para la compilacion basta con hacer -> make ftp
 !! Para iniciar el servidor esclavo se necesita hacer -> make run_server
