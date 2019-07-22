@@ -1,10 +1,25 @@
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server {
     public static void main(String[] args) throws IOException {
     	// Intentamos abrir el puerto del servidor
         try {
+            Socket socket = new Socket("localhost", 59090); // Nos registramos en el server_partes
+            DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
+            String msg = dis.readUTF();
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            String Entrada = "register " + inetAddress.getHostAddress();
+            System.out.println(Entrada);
+            dos.writeUTF(Entrada); // Enviamos la entrada al servidor
+            dis = new DataInputStream(socket.getInputStream());
+            msg = dis.readUTF();
+            System.out.println(msg);
             ServerSocket listener = new ServerSocket(59091);
             System.out.println("El servidor esta en marcha...");
             System.out.println("Ctrl + C para salir");

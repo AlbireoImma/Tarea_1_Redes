@@ -38,6 +38,18 @@ public class Process_Partes implements Runnable {
         }
     }
 
+    public static void escribir_IP(Hashtable<String, Boolean> IPS) {
+        try {
+            FileOutputStream escritura = new FileOutputStream("IPS.ser");
+            ObjectOutputStream ob_ser = new ObjectOutputStream(escritura);
+            ob_ser.writeObject(IPS);
+            ob_ser.close();
+            escritura.close();
+        } catch (Exception e) {
+            // TODO
+        }
+    }
+
     public static Hashtable<String, String[]> leer_ARCHIVOS() {
         try {
             FileInputStream salida = new FileInputStream("ARCHIVOS.ser");
@@ -49,6 +61,22 @@ public class Process_Partes implements Runnable {
         } catch (Exception e) {
             // TODO
             Hashtable<String, String[]> info = new Hashtable<String, String[]>();
+            return info;
+
+        }
+    }
+
+    public static Hashtable<String, Boolean> leer_IPS() {
+        try {
+            FileInputStream salida = new FileInputStream("IPS.ser");
+            ObjectInputStream objeto = new ObjectInputStream(salida);
+            Object info = objeto.readObject();
+            objeto.close();
+            salida.close();
+            return (Hashtable<String, Boolean>) info;
+        } catch (Exception e) {
+            // TODO
+            Hashtable<String, Boolean> info = new Hashtable<String, Boolean>();
             return info;
 
         }
@@ -223,12 +251,7 @@ public class Process_Partes implements Runnable {
             String[] ls_aux = new String[listOfFiles.length]; // Variable que contiene los nombres de archivo del
                                                               // servidor
             String to_log; // String usado para escribir en el log
-            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Conectado\n"; // Instanciacion
-                                                                                                                 // de
-                                                                                                                 // string
-                                                                                                                 // para
-                                                                                                                 // el
-                                                                                                                 // log
+            to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t" + "Conectado\n"; // Instanciacion de string para el log
             try { // Bloque Try-catch
                 log.write(to_log.getBytes()); // Escribimos en el log
                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al cliente
@@ -238,6 +261,7 @@ public class Process_Partes implements Runnable {
                     String Entrada = dis.readUTF(); // Esperamos un string por parte del cliente, el comando a realizar
                     String[] Entrada_parse = Entrada.split(" "); // Parseamos la entrada con un espacio de la forma
                                                                  // "verbo nombre_archivo" o "verbo"
+                    System.out.println(Entrada_parse[0]); // Entrada recibida
                     while (Entrada.length() > 0) { // Mientras la entrada del cliente no sea nula
                         if (Entrada.equals("ls")) { // Si el verbo es un ls
                             // TODO
@@ -396,6 +420,10 @@ public class Process_Partes implements Runnable {
                                                                                       // cliente
                                 dos.writeUTF("Solicitud Fallida"); // Enviamos un string al cliente
                             }
+                        } else if (Entrada_parse[0].equals("register")) { // Si el verbo es register
+                            IPS.put(Entrada_parse[1], true);
+                            escribir_IP(IPS);
+                            dos.writeUTF("Maquina registrada en maestro");
                         } else { // la pericion es invalida
                             System.out.println("Peticion invalida: " + socket); // Avisamos de la peticion
                             dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al
