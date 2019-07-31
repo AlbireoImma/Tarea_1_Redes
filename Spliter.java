@@ -39,7 +39,7 @@ public class Spliter {
 	public ArrayList<String> Separar(){
 		ArrayList<String> archivos = new ArrayList<String>();
 		String nombra_archivo;
-		System.out.println("Tamaño: " + tamanio);
+		System.out.println("Tamanio: " + tamanio);
 		System.out.println("Partes: " + partes);
 		System.out.println("Restante: " + restante);
 		try{
@@ -77,7 +77,7 @@ public class Spliter {
 			}
 			return archivos;
 		} catch(Exception e){
-			System.out.println("Error en la separación de los archivos");
+			System.out.println("Error en la separacion de los archivos");
 			return archivos;
 		}
 	}
@@ -100,13 +100,13 @@ public class Spliter {
 			InputStream entrada = null;
 			OutputStream salida = null;
 			System.out.println("Cantidad a unir: " + archivos.size());
-			File archivo = new File(expresion2);
+			File archivo = new File("./Server/" + expresion2);
 			byte[] dato = new byte[1024];
 			int linea;
 			salida = new FileOutputStream(archivo);
 			for (String expresion : archivos) {
 				System.out.println("Leyendo: " + expresion);
-				File subarchivo = new File(expresion);
+				File subarchivo = new File("./Server/"+expresion);
 				entrada = new FileInputStream(subarchivo);
 				while ((linea = entrada.read(dato)) > 0) {
 					salida.write(dato, 0,linea);
@@ -116,7 +116,7 @@ public class Spliter {
 			salida.close();
 			return expresion2;
 		} catch(Exception e){
-			System.out.println("Excepción generada al unir");
+			System.out.println("Excepcion generada al unir");
 			return "Error";
 		}
 	}

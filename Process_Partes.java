@@ -164,6 +164,7 @@ public class Process_Partes implements Runnable {
                                                                                    // datos hacia el servidor
             String Entrada = "del " + archivo; // Variable utilizada para la entrada de comandos al servidor
             System.out.println("Eliminando Archivo...");
+            System.out.println(Entrada);
             dos.writeUTF(Entrada); // Enviamos la entrada al servidor
             dis = new DataInputStream(socket.getInputStream());
             System.out.println(dis.readUTF());
@@ -310,13 +311,14 @@ public class Process_Partes implements Runnable {
                                 int parts = Integer.parseInt(respuesta[0]);
                                 ArrayList<String> nombres = new ArrayList<String>();
                                 for (int i = 0; i < parts; i++) {
-                                    nombres.add(Entrada_parse + ".cifrado." + (i + 1) + ".split");
+                                    nombres.add(Entrada_parse[1] + ".cifrado." + (i + 1) + ".split");
                                 }
                                 for (int i = 0; i < parts; i++) {
+                                	
                                     get_file(nombres.get(i), respuesta[i + 1]);
                                 }
                                 String unido = Spliter.Unir(nombres);
-                                Decode64 decoder = new Decode64(unido);
+                                Decode64 decoder = new Decode64("./Server/" + unido);
                                 String deco = decoder.decodificar();
                                 to_log = dateformat.format(Calendar.getInstance().getTime()) + "\t" + socket + "\t"
                                         + Entrada + "\n"; // Armamos el string para el log
@@ -406,7 +408,7 @@ public class Process_Partes implements Runnable {
                                 int parts = Integer.parseInt(respuesta[0]);
                                 ArrayList<String> nombres = new ArrayList<String>();
                                 for (int i = 0; i < parts; i++) {
-                                    nombres.add(Entrada_parse + ".cifrado." + (i + 1) + ".split");
+                                    nombres.add(Entrada_parse[1] + ".cifrado." + (i + 1) + ".split");
                                 }
                                 for (int i = 0; i < parts; i++) {
                                     del_file(nombres.get(i), respuesta[i + 1]);
@@ -415,6 +417,7 @@ public class Process_Partes implements Runnable {
                                                                                       // cliente
                                 dos.writeUTF("Solicitud Completada"); // Enviamos un string al cliente
                                 ARCHIVOS.remove(Entrada_parse[1]);
+                                escribir_ARCHIVOS(ARCHIVOS);
                             } else { // El archivo no existe
                                 dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida al
                                                                                       // cliente
