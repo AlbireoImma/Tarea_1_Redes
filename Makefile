@@ -5,7 +5,8 @@ run_server:
 	
 run_server_partes:
 	java Server_Partes
-	
+IP:
+	sed -i 's/\<localhost\>/${dir}/' ./*.java
 run_cliente:
 	java Client
 clean:
