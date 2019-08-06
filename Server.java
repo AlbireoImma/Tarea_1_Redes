@@ -9,7 +9,7 @@ public class Server {
     public static void main(String[] args) throws IOException {
     	// Intentamos abrir el puerto del servidor
         try {
-            Socket socket = new Socket("localhost", 59090); // Nos registramos en el server_partes
+            Socket socket = new Socket("10.6.40.141", 59090); // Nos registramos en el server_partes
             DataInputStream dis = new DataInputStream(socket.getInputStream()); // Creamos un stream de entrada de datos desde el servidor
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); // Creamos un stream de salida de datos hacia el servidor
             String msg = dis.readUTF();
