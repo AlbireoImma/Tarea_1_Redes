@@ -2,6 +2,7 @@ Integrantes:
 - Francisco Abarca 201673552-6
 - Juan Escalona 201373551-7
 
+!! Orden usual IP -> ftp -> run_server_partes -> run_server -> run_cliente
 !! Para definir la IP del server usamos make dir='IP' IP
 !! Para la compilacion basta con hacer -> make ftp
 !! Para iniciar el servidor esclavo se necesita hacer -> make run_server
